@@ -25,13 +25,13 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             var items = IndexTester<object>.CreateRandomItems(n, x => new object()).ToArray();
             var queries = IndexTester<object>.CreateRandomBoxes(n).ToArray();
 
-            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("------------------------------------------------------");
             Console.WriteLine("Dummy run to ensure classes are loaded before real run");
-            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("------------------------------------------------------");
             Run(items, queries);
-            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("------------------------------------------------------");
             Console.WriteLine("Real run");
-            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("------------------------------------------------------");
             Run(items, queries);
         }
 
@@ -41,14 +41,20 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             Console.WriteLine($"# items = {items.Count}");
             //indexResults.Add(Run(new RbushIndex<T>(4), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
-            indexResults.Add(Run(new RbushIndex<T>(7), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(7), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(8), items, queries));
-            indexResults.Add(Run(new RbushIndex<T>(9), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(9), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(10), items, queries));
-            indexResults.Add(Run(new RbushIndex<T>(11), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(11), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(12), items, queries));
-            //indexResults.Add(Run(new STRtreeIndex<T>(4), items, queries));
-            //indexResults.Add(Run(new STRtreeIndex<T>(9), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(13), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(14), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(15), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(16), items, queries));
+
+            indexResults.Add(Run(new STRtreeIndex<T>(6), items, queries));
+            indexResults.Add(Run(new STRtreeIndex<T>(10), items, queries));
+            indexResults.Add(Run(new STRtreeIndex<T>(14), items, queries));
             //indexResults.Add(Run(new QuadtreeIndex<T>(), items, queries));
             //indexResults.add(run(new QXtreeIndex(), n));
             //indexResults.Add(Run(new EnvelopeListIndex(), items.Select(t => Tuple.Create(t.Item1, t.Item1)).ToArray()));

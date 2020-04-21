@@ -14,13 +14,13 @@ namespace NetTopologySuite.Index.Rbush
         /// <typeparam name="TItem"></typeparam>
         private class Quick<TItem>
         {
-            public static void Select(IList<TItem> arr, int k, int left = 0, int? right = null,
+            public static void Select(Span<TItem> arr, int k, int left = 0, int? right = null,
                 IComparer<TItem> comparer = null)
             {
-                SelectStep(arr, k, left, right ?? arr.Count - 1, comparer ?? Comparer<TItem>.Default);
+                SelectStep(arr, k, left, right ?? arr.Length - 1, comparer ?? Comparer<TItem>.Default);
             }
 
-            private static void SelectStep(IList<TItem> arr, int k, int left, int right, IComparer<TItem> comparer)
+            private static void SelectStep(Span<TItem> arr, int k, int left, int right, IComparer<TItem> comparer)
             {
                 while (right > left)
                 {
@@ -64,7 +64,7 @@ namespace NetTopologySuite.Index.Rbush
                 }
             }
 
-            private static void Swap(IList<TItem> arr, int i, int j)
+            private static void Swap(Span<TItem> arr, int i, int j)
             {
                 var tmp = arr[i];
                 arr[i] = arr[j];

@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
 
@@ -100,13 +97,20 @@ namespace NetTopologySuite.Index.Rbush
             }
         }
 
+        /// <summary>
+        /// Gets all <see cref="ItemBoundable{T,TItem}.Item"/>s that are contained in <paramref name="node"/>
+        /// </summary>
+        /// <param name="node">A node</param>
+        /// <returns>An enumeration of <typeparamref name="T"/>-items.</returns>
         private static IEnumerable<T> GetAll(Node node)
         {
-            foreach (var child in node.Children)
+            var stack = new Stack<IBoundable<Envelope, T>>(node.Children);
+            while(stack.Count > 0)
             {
+                var child = stack.Pop();
                 if (child is Node nodeChild)
-                    foreach (var childChild in GetAll(nodeChild))
-                        yield return childChild;
+                    foreach (var grandChild in nodeChild.Children)
+                        stack.Push(grandChild);
                 else
                     yield return child.Item;
             }
@@ -198,7 +202,7 @@ namespace NetTopologySuite.Index.Rbush
         /// </summary>
         public void Clear()
         {
-            _data = new Node();
+            _data = new Node(Span<IBoundable<Envelope, T>>.Empty);
         }
 
         /// <summary>
@@ -229,7 +233,7 @@ namespace NetTopologySuite.Index.Rbush
             foreach (var item in items)
                 casted.Add(new ItemBoundable<Envelope, T>(item.Item1, item.Item2));
 
-            return Load(casted);
+            return Load(casted.ToArray().AsSpan());
         }
 
         /// <summary>
@@ -239,7 +243,7 @@ namespace NetTopologySuite.Index.Rbush
         /// <returns>This index.</returns>
         public Rbush<T> Load(IEnumerable<ItemBoundable<Envelope, T>> items)
         {
-            return Load(new List<IBoundable<Envelope, T>>(items));
+            return Load(new Span<IBoundable<Envelope, T>>(items.Cast<IBoundable<Envelope, T>>().ToArray()));
         }
 
         /// <summary>
@@ -247,13 +251,12 @@ namespace NetTopologySuite.Index.Rbush
         /// </summary>
         /// <param name="items">The items to add.</param>
         /// <returns>This index.</returns>
-        private Rbush<T> Load(IList<IBoundable<Envelope, T>> items)
+        private Rbush<T> Load(Span<IBoundable<Envelope, T>> items)
         {
-
-            if (!items.Any())
+            if (items.IsEmpty)
                 return this;
 
-            if (items.Count < _minEntries)
+            if (items.Length < _minEntries)
             {
                 foreach (var item in items)
                     Insert(item);
@@ -261,7 +264,7 @@ namespace NetTopologySuite.Index.Rbush
             }
 
             // recursively build the tree with the given data from scratch using OMT algorithm
-            var node = Build(items, 0, items.Count - 1, 0);
+            var node = Build(items, 0, items.Length - 1, 0);
 
             if (_data.Children.Count == 0)
             {
@@ -396,7 +399,7 @@ namespace NetTopologySuite.Index.Rbush
             int splitIndex = ChooseSplitIndex(node, m, M);
 
             int splitCount = node.Children.Count - splitIndex;
-            var newNode = new Node(Splice(node.Children,splitIndex, splitCount)) {
+            var newNode = new Node(Splice(node.Children, splitIndex, splitCount)) {
                 Height = node.Height,
                 IsLeaf = node.IsLeaf
             };
@@ -417,19 +420,12 @@ namespace NetTopologySuite.Index.Rbush
             CalculateBounds(_data);
         }
 
-        private static IEnumerable<IBoundable<Envelope, T>> Splice(List<IBoundable<Envelope, T>> source, int splitIndex,
+        private static Span<IBoundable<Envelope, T>> Splice(List<IBoundable<Envelope, T>> source, int splitIndex,
             int splitCount)
         {
             var res = source.GetRange(splitIndex, splitCount);
             source.RemoveRange(splitIndex, splitCount);
-            return res;
-        }
-
-        private static IEnumerable<IBoundable<Envelope, T>> Slice(IList<IBoundable<Envelope, T>> source, int startIndex,
-            int stopIndex)
-        {
-            for (int i = startIndex; i < stopIndex; i++)
-                yield return source[i];
+            return res.ToArray().AsSpan();
         }
 
         private int ChooseSplitIndex(Node node, int m, int M)
@@ -529,7 +525,7 @@ namespace NetTopologySuite.Index.Rbush
            return (a.MaxX - a.MinX) + (a.MaxY - a.MinY); 
         }
 
-        private Node Build(IList<IBoundable<Envelope, T>> items, int left, int right, int height)
+        private Node Build(Span<IBoundable<Envelope, T>> items, int left, int right, int height)
         {
 
             int N = right - left + 1;
@@ -539,7 +535,7 @@ namespace NetTopologySuite.Index.Rbush
             if (N <= M)
             {
                 // reached leaf level; return leaf
-                node = new Node(Slice(items, left, right + 1));
+                node = new Node(items.Slice(left, N));
                 CalculateBounds(node);
                 return node;
             }
@@ -553,7 +549,7 @@ namespace NetTopologySuite.Index.Rbush
                 M = (int)Math.Ceiling(N / Math.Pow(M, height - 1));
             }
 
-            node = new Node {
+            node = new Node(Span<IBoundable<Envelope, T>>.Empty) {
                 IsLeaf = false,
                 Height = height
             };
@@ -587,7 +583,7 @@ namespace NetTopologySuite.Index.Rbush
             return node;
         }
 
-        private static void MultiSelect(IList<IBoundable<Envelope, T>> arr, int left, int right, int n,
+        private static void MultiSelect(Span<IBoundable<Envelope, T>> arr, int left, int right, int n,
             IComparer<IBoundable<Envelope, T>> comparer)
         {
             var stack = new Stack<int>(new []{left, right});

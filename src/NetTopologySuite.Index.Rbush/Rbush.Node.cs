@@ -18,12 +18,9 @@ namespace NetTopologySuite.Index.Rbush
             /// Creates an instance of this class
             /// </summary>
             /// <param name="items"></param>
-            public Node(IEnumerable<IBoundable<Envelope, T>> items = null)
+            public Node(Span<IBoundable<Envelope, T>> items)
             {
-                if (items == null)
-                    Children = new List<IBoundable<Envelope, T>>();
-                else
-                    Children = items is List<IBoundable<Envelope, T>> lst ? lst : new List<IBoundable<Envelope, T>>(items);
+                Children = new List<IBoundable<Envelope,T>>(items.ToArray());
                 IsLeaf = true;
                 Height = 1;
             }
