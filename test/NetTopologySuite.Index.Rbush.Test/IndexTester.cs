@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
 
@@ -33,17 +34,24 @@ namespace NetTopologySuite.Index.Rbush.Test
             Console.Write(_index + "           ");
             GC.Collect();
             var sw = new Stopwatch();
+
             sw.Start();
             LoadTree(items);
+            sw.Stop();
+
             long loadTime = sw.ElapsedMilliseconds;
             result.loadMilliseconds = loadTime;
             GC.Collect();
+
             sw.Restart();
             //runGridQuery(1000);
             //runQuery(items);
             RunQuery(queries);
+            sw.Stop();
+
             long queryTime = sw.ElapsedMilliseconds;
             result.queryMilliseconds = queryTime;
+
             Console.WriteLine("  Load Time = " + loadTime + "  Query Time = " + queryTime);
             return result;
         }
@@ -98,17 +106,19 @@ namespace NetTopologySuite.Index.Rbush.Test
 
         private static Envelope CreateBox(Random random)
         {
-            double minX = RandomDouble(random, -100, 100);
-            double minY = RandomDouble(random, -100, 100);
-            double sizeX = RandomDouble(random, 0.0, 10);
-            double sizeY = RandomDouble(random, 0.0, 10);
+            const double maxSize = 10d;
+            double minX = RandomDouble(random, -100, 100 - maxSize);
+            double minY = RandomDouble(random, -100, 100 - maxSize);
+            double sizeX = RandomDouble(random, 0.0, maxSize);
+            double sizeY = RandomDouble(random, 0.0, maxSize);
+
             return new Envelope(minX, minX + sizeX, minY, minY + sizeY);
         }
 
-        private static readonly PrecisionModel _pm = new PrecisionModel(100);
+        private static readonly PrecisionModel PM = new PrecisionModel(100);
         private static double RandomDouble(Random random, double min, double max)
         {
-            return _pm.MakePrecise(min + random.NextDouble() * (max - min));
+            return PM.MakePrecise(min + random.NextDouble() * (max - min));
         }
 
         private void LoadTree(IEnumerable<Tuple<Envelope, T>> items)
@@ -137,7 +147,7 @@ namespace NetTopologySuite.Index.Rbush.Test
                 querySize += list.Count;
                 count++;
             }
-            Console.WriteLine($"Avg query size = {querySize / count}");
+            Console.WriteLine($"Avg query size = {(querySize / count).ToString("F2", NumberFormatInfo.InvariantInfo)}");
         }
 
         void runGridQuery(int nGridCells)

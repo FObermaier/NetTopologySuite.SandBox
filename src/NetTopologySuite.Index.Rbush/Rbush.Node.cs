@@ -109,7 +109,7 @@ namespace NetTopologySuite.Index.Rbush
                     return true;
                 }
             }
-        }
 #endif
+        }
     }
 }

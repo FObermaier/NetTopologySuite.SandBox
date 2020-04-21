@@ -40,8 +40,14 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             var indexResults = new List<IndexResult>();
             Console.WriteLine($"# items = {items.Count}");
             //indexResults.Add(Run(new RbushIndex<T>(4), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(7), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(8), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(9), items, queries));
-            indexResults.Add(Run(new STRtreeIndex<T>(4), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(10), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(11), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(12), items, queries));
+            //indexResults.Add(Run(new STRtreeIndex<T>(4), items, queries));
             //indexResults.Add(Run(new STRtreeIndex<T>(9), items, queries));
             //indexResults.Add(Run(new QuadtreeIndex<T>(), items, queries));
             //indexResults.add(run(new QXtreeIndex(), n));
@@ -150,10 +156,12 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
 
             public void Search(Envelope env, TextWriter @out)
             {
+#if DEBUG
                 @out.WriteLine();
                 @out.WriteLine("Searching for {0}", env);
 
                 _index.Search(env, @out);
+#endif
             }
 
             public override string ToString()
