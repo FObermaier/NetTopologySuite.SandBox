@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+#if DEBUG
+using System.IO;
+#endif
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
@@ -59,8 +62,6 @@ namespace NetTopologySuite.Index.Rbush
             var nodesToSearch = new List<Node>();
             while (node != null)
             {
-                //Debug.Assert(node.IntegrityCheck);
-
                 for (int i = 0; i < node.Children.Count; i++)
                 {
                     var child = node.Children[i];

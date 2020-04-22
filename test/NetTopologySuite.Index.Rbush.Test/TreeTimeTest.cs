@@ -40,17 +40,23 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             var indexResults = new List<IndexResult>();
             Console.WriteLine($"# items = {items.Count}");
             //indexResults.Add(Run(new RbushIndex<T>(4), items, queries));
-            indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
+            //indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(6), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(7), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(8), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(8), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(9), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(10), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(10), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(11), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(12), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(12), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(13), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(14), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(14), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(15), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(16), items, queries));
+            indexResults.Add(Run(new FlatbushIndex<T>(16), items, queries));
 
             indexResults.Add(Run(new STRtreeIndex<T>(6), items, queries));
             indexResults.Add(Run(new STRtreeIndex<T>(10), items, queries));
@@ -155,7 +161,7 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             public void FinishInserting()
             {
                 _index.Load(_items);
-                _items.Clear();
+                //_items.Clear();
                 
                 //_index.IntegrityCheck();
             }
@@ -175,5 +181,46 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
                 return $"Rbush[M{_maxNodeCapacity}]";
             }
         }
+
+        class FlatbushIndex<T> : IIndex<T>
+        {
+            private Flatbush<T> _index;
+            private readonly int _maxNodeCapacity;
+            private readonly List<ItemBoundable<Envelope, T>> _items = new List<ItemBoundable<Envelope, T>>();
+
+            public FlatbushIndex(int maxNodeCapacity)
+            {
+                _maxNodeCapacity = maxNodeCapacity;
+            }
+
+            public void Insert(Envelope itemEnv, T item)
+            {
+                _items.Add(new ItemBoundable<Envelope, T>(itemEnv, item));
+            }
+
+            public IList<T> Query(Envelope searchEnv)
+            {
+                return _index.Query(searchEnv);
+            }
+
+            public void FinishInserting()
+            {
+                _index = new Flatbush<T>(_items.Count, _maxNodeCapacity);
+                foreach (ItemBoundable<Envelope, T> itemBoundable in _items)
+                    _index.Insert(itemBoundable.Bounds, itemBoundable.Item);
+                _index.Build();
+                //_items.Clear();
+            }
+
+            public void Search(Envelope env, TextWriter @out)
+            {
+            }
+
+            public override string ToString()
+            {
+                return $"Flatbush[M{_maxNodeCapacity}]";
+            }
+        }
+
     }
 }
