@@ -1,13 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using NetTopologySuite.Geometries;
 
 namespace NetTopologySuite.Index.Rbush
 {
     /// <summary>
     /// Static 2d spatial index implemented using packed Hilbert R-tree.
+    /// <para/>
+    /// This is an adaptation of Jedidiah Buck McCready's 
+    /// <a href="https://github.com/jbuckmccready/Flatbush">Flatbush</a> index
+    /// to fit in the <see cref="ISpatialIndex{T}"/> ecosystem.<br/>
+    /// Flatbush was released under MIT License.
     /// </summary>
+    /// <remarks>
+    /// </remarks>
     public class Flatbush<T> : ISpatialIndex<T>
     {
         private readonly int _numItems;
@@ -40,8 +47,7 @@ namespace NetTopologySuite.Index.Rbush
             // and the index of each tree level (used in search later)
             int n = numItems;
             int numNodes = n;
-            var levelBounds = new List<int>();
-            levelBounds.Add(n);
+            var levelBounds = new List<int> {n};
             do
             {
                 n = (int)Math.Ceiling((double)n / _nodeSize);
@@ -65,6 +71,14 @@ namespace NetTopologySuite.Index.Rbush
         public Envelope Bounds => _bounds.Copy();
 
         /// <summary>
+        /// Gets a value indicating the number of items in the tree
+        /// </summary>
+        public int Count
+        {
+            get { return _pos < _numItems ? _pos : _numItems; }
+        }
+
+        /// <summary>
         /// Add a new 2d box to the spatial index, must not go over the static size given at time of construction.
         /// </summary>
         /// <param name="itemBounds">The bounds for <paramref name="item"/></param>
@@ -72,9 +86,9 @@ namespace NetTopologySuite.Index.Rbush
         public void Insert(Envelope itemBounds, T item)
         {
             if (_pos == _boxes.Length)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Adding items to built tree is not allowed.");
             if (_pos >= _numItems)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Adding more than {_numItems} items is not allowed.");
 
             _indices[_pos] = _pos;
 
@@ -260,40 +274,41 @@ namespace NetTopologySuite.Index.Rbush
 
         // Fast Hilbert curve algorithm by http://threadlocalmutex.com/
         // Ported from C++ https://github.com/rawrunprotected/hilbert_curves (public domain)
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static uint Hilbert(uint x, uint y)
         {
 
-            var a = x ^ y;
-            var b = 0xFFFF ^ a;
-            var c = 0xFFFF ^ (x | y);
-            var d = x & (y ^ 0xFFFF);
+            uint a = x ^ y;
+            uint b = 0xFFFF ^ a;
+            uint c = 0xFFFF ^ (x | y);
+            uint d = x & (y ^ 0xFFFF);
 
-            var A = a | (b >> 1);
-            var B = (a >> 1) ^ a;
-            var C = ((c >> 1) ^ (b & (d >> 1))) ^ c;
-            var D = ((a & (c >> 1)) ^ (d >> 1)) ^ d;
-
-            a = A; b = B; c = C; d = D;
-            A = ((a & (a >> 2)) ^ (b & (b >> 2)));
-            B = ((a & (b >> 2)) ^ (b & ((a ^ b) >> 2)));
-            C ^= ((a & (c >> 2)) ^ (b & (d >> 2)));
-            D ^= ((b & (c >> 2)) ^ ((a ^ b) & (d >> 2)));
+            uint A = a | (b >> 1);
+            uint B = (a >> 1) ^ a;
+            uint C = ((c >> 1) ^ (b & (d >> 1))) ^ c;
+            uint D = ((a & (c >> 1)) ^ (d >> 1)) ^ d;
 
             a = A; b = B; c = C; d = D;
-            A = ((a & (a >> 4)) ^ (b & (b >> 4)));
-            B = ((a & (b >> 4)) ^ (b & ((a ^ b) >> 4)));
-            C ^= ((a & (c >> 4)) ^ (b & (d >> 4)));
-            D ^= ((b & (c >> 4)) ^ ((a ^ b) & (d >> 4)));
+            A = (a & (a >> 2)) ^ (b & (b >> 2));
+            B = (a & (b >> 2)) ^ (b & ((a ^ b) >> 2));
+            C ^= (a & (c >> 2)) ^ (b & (d >> 2));
+            D ^= (b & (c >> 2)) ^ ((a ^ b) & (d >> 2));
 
             a = A; b = B; c = C; d = D;
-            C ^= ((a & (c >> 8)) ^ (b & (d >> 8)));
-            D ^= ((b & (c >> 8)) ^ ((a ^ b) & (d >> 8)));
+            A = (a & (a >> 4)) ^ (b & (b >> 4));
+            B = (a & (b >> 4)) ^ (b & ((a ^ b) >> 4));
+            C ^= (a & (c >> 4)) ^ (b & (d >> 4));
+            D ^= (b & (c >> 4)) ^ ((a ^ b) & (d >> 4));
+
+            a = A; b = B; c = C; d = D;
+            C ^= (a & (c >> 8)) ^ (b & (d >> 8));
+            D ^= (b & (c >> 8)) ^ ((a ^ b) & (d >> 8));
 
             a = C ^ (C >> 1);
             b = D ^ (D >> 1);
 
-            var i0 = x ^ y;
-            var i1 = b | (0xFFFF ^ (i0 | a));
+            uint i0 = x ^ y;
+            uint i1 = b | (0xFFFF ^ (i0 | a));
 
             i0 = (i0 | (i0 << 8)) & 0x00FF00FF;
             i0 = (i0 | (i0 << 4)) & 0x0F0F0F0F;
