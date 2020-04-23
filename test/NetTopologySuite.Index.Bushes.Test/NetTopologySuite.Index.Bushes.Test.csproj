@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Bushes.csproj" />
+    <ProjectReference Include="..\..\src\NetTopologySuite.Index.Bushes\NetTopologySuite.Index.Bushes.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,14 +7,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>nts spatialindex rbush flatbush</PackageTags>
+    <PackageTags>nts spatial-index rbush flatbush</PackageTags>
     <Copyright>2020 - Felix Obermaier</Copyright>
     <RepositoryUrl>https://github.com/fobermaier/NetTopologySuite.Sandbox</RepositoryUrl>
     <Authors>Felix Obermaier</Authors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>D:\Development\Source\Repos\NetTopologySuite.SandBox\src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Bushes.xml</DocumentationFile>
+    <DocumentationFile>$(OutDir)NetTopologySuite.Index.Bushes.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

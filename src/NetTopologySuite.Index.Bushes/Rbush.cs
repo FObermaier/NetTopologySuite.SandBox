@@ -13,8 +13,15 @@ namespace NetTopologySuite.Index.Bushes
     /// <summary>
     /// RBush is a high-performance spatial index for 2D points and rectangles.<br/>
     /// It is based on an optimized R-tree data structure with bulk insertion support.
+    /// <para/>
+    /// RBush is updateable, i.e. items can be added or removed even after the tree
+    /// has initially been built.
+    /// <para/>
+    /// RBush is based on Vladimir Agafonkin's <a href="https://github.com/mourner/rbush">RBush</a>
+    /// package for javascript, which is MIT licensed.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the boundable items stored in the spatial index</typeparam>
+    [SuppressMessage("ReSharper", "IdentifierTypo")]
     public partial class Rbush<T> : ISpatialIndex<T>
     {
         private readonly int _maxEntries;
@@ -27,7 +34,7 @@ namespace NetTopologySuite.Index.Bushes
         /// Creates an instance of this class
         /// </summary>
         /// <param name="maxEntries">The maximum number of entries per node</param>
-        /// <param name="equalityComparer">An equality comparer for <see cref="T"/>-items</param>
+        /// <param name="equalityComparer">An equality comparer for <typeparamref name="T"/>-items</param>
         public Rbush(int maxEntries = 9, IEqualityComparer<T> equalityComparer = null)
         {
             _maxEntries = maxEntries;
@@ -681,6 +688,7 @@ namespace NetTopologySuite.Index.Bushes
         }
 
 #if DEBUG
+#pragma warning disable 1591
         public void IntegrityCheck()
         {
             var path = new List<Tuple<int, Node>>();
@@ -738,6 +746,7 @@ namespace NetTopologySuite.Index.Bushes
                 Pop(path);
             }
         }
+#pragma warning restore 1591
 #endif
     }
 }
