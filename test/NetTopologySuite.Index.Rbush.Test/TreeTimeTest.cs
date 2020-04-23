@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NetTopologySuite.Geometries;
-using NetTopologySuite.Index;
-//using NetTopologySuite.Index.HPRtree;
-using NetTopologySuite.Index.Quadtree;
-using NetTopologySuite.Index.Rbush;
+using NetTopologySuite.Index.Bushes;
 using NetTopologySuite.Index.Rbush.Test;
 using NetTopologySuite.Index.Strtree;
 using NUnit.Framework;
@@ -15,12 +12,13 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
 {
     public class TreeTimeTest
     {
-        public const int NUM_ITEMS = 100_000;
+        private const int NumItems = 100_000;
+        private const int Scale = 10; 
 
         [Test]
         public void TestWithObject()
         {
-            int n = NUM_ITEMS;
+            int n = NumItems;
             //var items = IndexTester<object>.CreateGridItems(n, t => new object());
             var items = IndexTester<object>.CreateRandomItems(n, x => new object()).ToArray();
             var queries = IndexTester<object>.CreateRandomBoxes(n).ToArray();
@@ -40,7 +38,7 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             var indexResults = new List<IndexResult>();
             Console.WriteLine($"# items = {items.Count}");
             //indexResults.Add(Run(new RbushIndex<T>(4), items, queries));
-            //indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
+            indexResults.Add(Run(new RbushIndex<T>(6), items, queries));
             indexResults.Add(Run(new FlatbushIndex<T>(6), items, queries));
             //indexResults.Add(Run(new RbushIndex<T>(7), items, queries));
             indexResults.Add(Run(new RbushIndex<T>(8), items, queries));
@@ -107,7 +105,7 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
             }
         }
 
-
+        /*
         class QuadtreeIndex<T> : IIndex<T>
         {
             private readonly Quadtree<T> index = new Quadtree<T>();
@@ -136,7 +134,7 @@ namespace NetTopologySuite.Tests.NUnit.Performance.Index
                 return "Quad";
             }
         }
-
+         */
         class RbushIndex<T> : IIndex<T>
         {
             private readonly Rbush<T> _index;

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
 
-namespace NetTopologySuite.Index.Rbush
+namespace NetTopologySuite.Index.Bushes
 {
     public partial class Rbush<T>
     {
@@ -43,7 +43,7 @@ namespace NetTopologySuite.Index.Rbush
 
             /// <summary>
             /// Gets the children of this node. If this node is a leaf,
-            /// children are of type <see cref="ItemBoundable{Envelope,T}"/>,
+            /// children are of type <see cref="ItemBoundable{T,TItem}"/>,
             /// otherwise they are <see cref="Node"/>s.
             /// </summary>
             public List<IBoundable<Envelope, T>> Children { get; }

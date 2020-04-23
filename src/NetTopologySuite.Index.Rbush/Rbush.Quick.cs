@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NetTopologySuite.Index.Rbush
+namespace NetTopologySuite.Index.Bushes
 {
     public partial class Rbush<T>
     {

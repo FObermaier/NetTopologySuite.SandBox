@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using NetTopologySuite.Geometries;
 
-namespace NetTopologySuite.Index.Rbush
+namespace NetTopologySuite.Index.Bushes
 {
     /// <summary>
     /// Static 2d spatial index implemented using packed Hilbert R-tree.
@@ -150,7 +150,7 @@ namespace NetTopologySuite.Index.Rbush
             }
 
             // sort items by their Hilbert value (for packing later)
-            Sort(hilbertValues, _boxes, _indices, 0, _numItems - 1);
+            Sort(hilbertValues, _boxes, _indices, 0, _numItems - 1, _nodeSize);
 
             // generate nodes at each tree level, bottom-up
             pos = 0;
@@ -199,7 +199,7 @@ namespace NetTopologySuite.Index.Rbush
             while (!done)
             {
                 // find the end index of the node
-                int end = Math.Min(nodeIndex + _nodeSize, _levelBounds[level]);
+                int end = Math.Min(nodeIndex + _nodeSize, UpperBound(nodeIndex, _levelBounds));
 
                 // search through child nodes
                 for (int pos = nodeIndex; pos < end; pos++)
@@ -235,10 +235,30 @@ namespace NetTopologySuite.Index.Rbush
 
         }
 
-        // custom quicksort that sorts bbox data alongside the hilbert values
-        private static void Sort(uint[] values, Envelope[] boxes, int[] indices, int left, int right)
+        // binary search for the first value in the array bigger than the given
+        private static int UpperBound(int value, Span<int> arr)
         {
-            if (left >= right) return;
+            int i = 0;
+            int j = arr.Length - 1;
+            while (i < j)
+            {
+                int m = (i + j) >> 1;
+                if (arr[m] > value)
+                {
+                    j = m;
+                }
+                else
+                {
+                    i = m + 1;
+                }
+            }
+            return arr[i];
+        }
+
+        // custom quicksort that partially sorts bbox data alongside the hilbert values
+        private static void Sort(uint[] values, Envelope[] boxes, int[] indices, int left, int right, int nodeSize)
+        {
+            if (Math.Floor((double)left / nodeSize) >= Math.Floor((double)right / nodeSize)) return;
 
             uint pivot = values[(left + right) >> 1];
             int i = left - 1;
@@ -252,8 +272,8 @@ namespace NetTopologySuite.Index.Rbush
                 Swap(values, boxes, indices, i, j);
             }
 
-            Sort(values, boxes, indices, left, j);
-            Sort(values, boxes, indices, j + 1, right);
+            Sort(values, boxes, indices, left, j, nodeSize);
+            Sort(values, boxes, indices, j + 1, right, nodeSize);
         }
 
         // swap two values and two corresponding boxes

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Noding;
 using NUnit.Framework;
 
 namespace NetTopologySuite.Index.Rbush.Test
@@ -17,9 +18,10 @@ namespace NetTopologySuite.Index.Rbush.Test
 
     internal class IndexTester<T>
     {
-        const int NUM_ITEMS = 2000;
-        const double EXTENT_MIN = -1000.0;
-        const double EXTENT_MAX = 1000.0;
+        private const int NumItems = 2000;
+        private const double ExtentMin = -1000.0;
+        private const double ExtentMax = 1000.0;
+        private const double Scale = 10;
 
         private readonly IIndex<T> _index;
 
@@ -61,15 +63,15 @@ namespace NetTopologySuite.Index.Rbush.Test
             var items = new List<Tuple<Envelope, T>>();
             int gridSize = (int)Math.Sqrt((double)nGridCells);
             gridSize += 1;
-            double extent = EXTENT_MAX - EXTENT_MIN;
+            double extent = ExtentMax - ExtentMin;
             double gridInc = extent / gridSize;
             double cellSize = gridInc;
             for (int i = 0; i < gridSize; i++)
             {
                 for (int j = 0; j < gridSize; j++)
                 {
-                    double x = EXTENT_MIN + gridInc * i;
-                    double y = EXTENT_MIN + gridInc * j;
+                    double x = ExtentMin + gridInc * i;
+                    double y = ExtentMin + gridInc * j;
                     var env = new Envelope(x, x + cellSize,
                                            y, y + cellSize);
                     items.Add(Tuple.Create(env, createItem(env)));
@@ -115,7 +117,7 @@ namespace NetTopologySuite.Index.Rbush.Test
             return new Envelope(minX, minX + sizeX, minY, minY + sizeY);
         }
 
-        private static readonly PrecisionModel PM = new PrecisionModel(100);
+        private static readonly PrecisionModel PM = new PrecisionModel(Scale);
         private static double RandomDouble(Random random, double min, double max)
         {
             return PM.MakePrecise(min + random.NextDouble() * (max - min));
@@ -152,8 +154,8 @@ namespace NetTopologySuite.Index.Rbush.Test
 
         void runGridQuery(int nGridCells)
         {
-            int cellSize = (int)Math.Sqrt((double)NUM_ITEMS);
-            double extent = EXTENT_MAX - EXTENT_MIN;
+            int cellSize = (int)Math.Sqrt((double)NumItems);
+            double extent = ExtentMax - ExtentMin;
             double queryCellSize = 2.0 * extent / cellSize;
 
             QueryGrid(nGridCells, queryCellSize);
@@ -164,15 +166,15 @@ namespace NetTopologySuite.Index.Rbush.Test
 
             int gridSize = (int)Math.Sqrt((double)nGridCells);
             gridSize += 1;
-            double extent = EXTENT_MAX - EXTENT_MIN;
+            double extent = ExtentMax - ExtentMin;
             double gridInc = extent / gridSize;
 
             for (int i = 0; i < gridSize; i++)
             {
                 for (int j = 0; j < gridSize; j++)
                 {
-                    double x = EXTENT_MIN + gridInc * i;
-                    double y = EXTENT_MIN + gridInc * j;
+                    double x = ExtentMin + gridInc * i;
+                    double y = ExtentMin + gridInc * j;
                     var env = new Envelope(x, x + cellSize,
                                            y, y + cellSize);
                     _index.Query(env);

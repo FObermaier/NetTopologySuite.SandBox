@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
 
-namespace NetTopologySuite.Index.Rbush.Test
+namespace NetTopologySuite.Index.Bushes.Test
 {
     public static class ItemValueGenerators
     {

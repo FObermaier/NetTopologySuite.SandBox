@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>NetTopologySuite.Index.Bushes.Test</AssemblyName>
+
+    <RootNamespace>NetTopologySuite.Index.Bushes.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Rbush.csproj" />
+    <ProjectReference Include="..\..\src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Bushes.csproj" />
   </ItemGroup>
 
 </Project>

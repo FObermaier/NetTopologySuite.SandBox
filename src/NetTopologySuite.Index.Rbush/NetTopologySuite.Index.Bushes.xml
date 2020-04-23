@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NetTopologySuite.Index.Bushes</name>
+    </assembly>
+    <members>
+        <member name="T:NetTopologySuite.Index.Rbush.Flatbush`1">
+            <summary>
+            Static 2d spatial index implemented using packed Hilbert R-tree.
+            <para/>
+            This is an adaptation of Jedidiah Buck McCready's 
+            <a href="https://github.com/jbuckmccready/Flatbush">Flatbush</a> index
+            to fit in the <see cref="T:NetTopologySuite.Index.ISpatialIndex`1"/> ecosystem.<br/>
+            Flatbush was released under MIT License.
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a new static 2d spatial index.
+            </summary>
+            <param name="numItems">The fixed number of 2d boxes to be included in the index.</param>
+            <param name="nodeSize">Size of the tree node, adjust to tune for particular use case performance.</param>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Flatbush`1.Bounds">
+            <summary>
+            Gets a value indicating the area covered by the tree
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Flatbush`1.Count">
+            <summary>
+            Gets a value indicating the number of items in the tree
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.Insert(NetTopologySuite.Geometries.Envelope,`0)">
+            <summary>
+            Add a new 2d box to the spatial index, must not go over the static size given at time of construction.
+            </summary>
+            <param name="itemBounds">The bounds for <paramref name="item"/></param>
+            <param name="item">The item</param>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.Remove(NetTopologySuite.Geometries.Envelope,`0)">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Remove(NetTopologySuite.Geometries.Envelope,`0)"/>
+            <remarks>
+            This function always does nothing and returns <c>false</c> under all circumstances.
+            The nature of <see cref="T:NetTopologySuite.Index.Rbush.Flatbush`1"/> prohibits removing items from the tree.
+            </remarks>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.Build">
+            <summary>
+            Method to perform the indexing, to be called after adding all the boundable items via <see cref="M:NetTopologySuite.Index.Rbush.Flatbush`1.Insert(NetTopologySuite.Geometries.Envelope,`0)"/>.
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.Query(NetTopologySuite.Geometries.Envelope)">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Query(NetTopologySuite.Geometries.Envelope)"/>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Flatbush`1.Query(NetTopologySuite.Geometries.Envelope,NetTopologySuite.Index.IItemVisitor{`0})">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Query(NetTopologySuite.Geometries.Envelope,NetTopologySuite.Index.IItemVisitor{`0})"/>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.#ctor(System.Int32,System.Collections.Generic.IEqualityComparer{`0})">
+            <summary>
+            Creates an instance of this class
+            </summary>
+            <param name="maxEntries">The maximum number of entries per node</param>
+            <param name="equalityComparer">An equality comparer for <see cref="!:T"/>-items</param>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Height">
+            <summary>
+            Gets a value indicating the height of the bush.
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Insert(NetTopologySuite.Geometries.Envelope,`0)">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Insert(NetTopologySuite.Geometries.Envelope,`0)"/>>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Query(NetTopologySuite.Geometries.Envelope)">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Query(NetTopologySuite.Geometries.Envelope)"/>>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Query(NetTopologySuite.Geometries.Envelope,NetTopologySuite.Index.IItemVisitor{`0})">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Query(NetTopologySuite.Geometries.Envelope,NetTopologySuite.Index.IItemVisitor{`0})"/>>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Count">
+            <summary>
+            Gets the number of items in the index
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.GetAll(NetTopologySuite.Index.Rbush.Rbush{`0}.Node)">
+            <summary>
+            Gets all <see cref="P:NetTopologySuite.Index.Strtree.ItemBoundable`2.Item"/>s that are contained in <paramref name="node"/>
+            </summary>
+            <param name="node">A node</param>
+            <returns>An enumeration of <typeparamref name="T"/>-items.</returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Remove(NetTopologySuite.Geometries.Envelope,`0)">
+            <inheritdoc cref="M:NetTopologySuite.Index.ISpatialIndex`1.Remove(NetTopologySuite.Geometries.Envelope,`0)"/>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Clear">
+            <summary>
+            Method to clear the whole Rbush-index
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Pop``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Utility method to remove the last item of a list
+            </summary>
+            <typeparam name="TT">The type of the items kept in the list</typeparam>
+            <param name="items"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Load(System.ValueTuple{NetTopologySuite.Geometries.Envelope,`0}[])">
+            <summary>
+            Utility method to load items to this index
+            </summary>
+            <param name="items">The items to add.</param>
+            <returns>This index.</returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Load(System.Collections.Generic.IEnumerable{NetTopologySuite.Index.Strtree.ItemBoundable{NetTopologySuite.Geometries.Envelope,`0}})">
+            <summary>
+            Utility method to load items to this index
+            </summary>
+            <param name="items">The items to add.</param>
+            <returns>This index.</returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Load(System.Span{NetTopologySuite.Geometries.IBoundable{NetTopologySuite.Geometries.Envelope,`0}})">
+            <summary>
+            Utility method to load items to this index
+            </summary>
+            <param name="items">The items to add.</param>
+            <returns>This index.</returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Insert(NetTopologySuite.Geometries.IBoundable{NetTopologySuite.Geometries.Envelope,`0})">
+            <summary>
+            Method to insert a boundable item to the index
+            </summary>
+            <param name="item">A boundable item</param>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Insert(NetTopologySuite.Geometries.IBoundable{NetTopologySuite.Geometries.Envelope,`0},System.Int32)">
+            <summary>
+            Method to insert a boundable item to the index at a specific level
+            </summary>
+            <param name="item">A boundable item</param>
+            <param name="level">The level to add the boundable at.</param>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.ChooseSplitAxis(NetTopologySuite.Index.Rbush.Rbush{`0}.Node,System.Int32,System.Int32)">
+            <summary>
+            Sorts node children by the best axis for split
+            </summary>
+            <param name="node">A node</param>
+            <param name="m"></param>
+            <param name="M"></param>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.CalculateBounds(NetTopologySuite.Index.Rbush.Rbush{`0}.Node)">
+            <summary>
+            Calculate the bounds of a node
+            </summary>
+            <param name="node"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.CalculatePartialBounds(NetTopologySuite.Index.Rbush.Rbush{`0}.Node,System.Int32,System.Int32,NetTopologySuite.Index.Rbush.Rbush{`0}.Node)">
+            <summary>
+            Calculates the partial extent of a node from its children
+            </summary>
+            <param name="node">The node</param>
+            <param name="startIndex">The start index</param>
+            <param name="excludedStopIndex">The stop index</param>
+            <param name="destNode">The node that takes the updated extent. If <c>null</c> a new node will be created.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.ExpandBounds(NetTopologySuite.Index.Rbush.Rbush{`0}.Node,NetTopologySuite.Geometries.IBoundable{NetTopologySuite.Geometries.Envelope,`0})">
+            <summary>
+            Expand the bounds of a node to include the bounds of another node
+            </summary>
+            <param name="a">The node which bounds are to be expanded</param>
+            <param name="b">A node</param>
+        </member>
+        <member name="T:NetTopologySuite.Index.Rbush.Rbush`1.BoundableComparer">
+            <summary>
+            A comparer for <see cref="T:NetTopologySuite.Geometries.IBoundable`2"/>s.
+            </summary>
+        </member>
+        <member name="T:NetTopologySuite.Index.Rbush.Rbush`1.Node">
+            <summary>
+            A node in an <see cref="T:NetTopologySuite.Index.Rbush.Rbush`1"/> tree.
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Node.#ctor(System.Span{NetTopologySuite.Geometries.IBoundable{NetTopologySuite.Geometries.Envelope,`0}})">
+            <summary>
+            Creates an instance of this class
+            </summary>
+            <param name="items"></param>
+        </member>
+        <member name="M:NetTopologySuite.Index.Rbush.Rbush`1.Node.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Creates a node from serialization
+            </summary>
+            <param name="info">The serialization object.</param>
+            <param name="context">The streaming context.</param>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Node.Children">
+            <summary>
+            Gets the children of this node. If this node is a leaf,
+            children are of type <see cref="T:NetTopologySuite.Index.Strtree.ItemBoundable`2"/>,
+            otherwise they are <see cref="T:NetTopologySuite.Index.Rbush.Rbush`1.Node"/>s.
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Node.Height">
+            <summary>
+            Gets a value indicating the height of this node.
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Node.IsLeaf">
+            <summary>
+            Gets a value indicating if this node is a leaf
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Node.Bounds">
+            <inheritdoc cref="P:NetTopologySuite.Geometries.IBoundable`2.Bounds"/>
+        </member>
+        <member name="P:NetTopologySuite.Index.Rbush.Rbush`1.Node.Item">
+            <inheritdoc cref="P:NetTopologySuite.Geometries.IBoundable`2.Item"/>
+        </member>
+        <member name="T:NetTopologySuite.Index.Rbush.Rbush`1.Quick`1">
+            <summary>
+            A tiny and fast selection algorithm in C#.
+            </summary>
+            <remarks>
+            This is a direct port of Vladimir Agafonkin's quickselect package
+            </remarks>
+            <typeparam name="TItem"></typeparam>
+        </member>
+    </members>
+</doc>

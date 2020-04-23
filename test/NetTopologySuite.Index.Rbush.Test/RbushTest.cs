@@ -4,7 +4,7 @@ using NetTopologySuite.IO;
 using NetTopologySuite.Operation.Polygonize;
 using NUnit.Framework;
 
-namespace NetTopologySuite.Index.Rbush.Test
+namespace NetTopologySuite.Index.Bushes.Test
 {
     public class RbushTest
     {

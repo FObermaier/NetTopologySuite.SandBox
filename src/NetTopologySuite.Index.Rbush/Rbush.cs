@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-#if DEBUG
-using System.IO;
-#endif
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
+#if DEBUG
+using System.IO;
+#endif
 
-namespace NetTopologySuite.Index.Rbush
+namespace NetTopologySuite.Index.Bushes
 {
+    /// <summary>
+    /// RBush is a high-performance spatial index for 2D points and rectangles.<br/>
+    /// It is based on an optimized R-tree data structure with bulk insertion support.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public partial class Rbush<T> : ISpatialIndex<T>
     {
         private readonly int _maxEntries;

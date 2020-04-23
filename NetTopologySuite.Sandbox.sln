@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.Index.Rbush", "src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Rbush.csproj", "{9040FF3C-A609-442C-A145-8EB38C12CA8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.Index.Bushes", "src\NetTopologySuite.Index.Rbush\NetTopologySuite.Index.Bushes.csproj", "{9040FF3C-A609-442C-A145-8EB38C12CA8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.Index.Rbush.Test", "test\NetTopologySuite.Index.Rbush.Test\NetTopologySuite.Index.Rbush.Test.csproj", "{BF4C976F-8F96-43C4-A59B-F435D5751F7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTopologySuite.Index.Bushes.Test", "test\NetTopologySuite.Index.Rbush.Test\NetTopologySuite.Index.Bushes.Test.csproj", "{BF4C976F-8F96-43C4-A59B-F435D5751F7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
